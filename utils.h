@@ -8,7 +8,6 @@
 #include "big_integer.h"
 #include <algorithm>
 
-const uint64_t BASE = 1 << 32;
 void add_magnitude(big_integer::magnitude_t &, const big_integer::magnitude_t &);
 void sub_magnitude(big_integer::magnitude_t &, const big_integer::magnitude_t &, const big_integer::magnitude_t &);
 void strip_leading_zeroes(big_integer::magnitude_t &);

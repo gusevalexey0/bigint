@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
-#include "my_vector.h"
 
 struct big_integer
 {

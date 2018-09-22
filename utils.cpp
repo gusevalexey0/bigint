@@ -115,7 +115,7 @@ void shift_right_magnitude(big_integer::magnitude_t &a, big_integer::digit_t rhs
     big_integer::digit_t d = 0;
     big_integer::magnitude_t res;
     size_t st = 0;
-    while (rhs >= sizeof(big_integer::digit_t) * 8) {
+    while (rhs >= bits_in_base()) {
         st = rhs / bits_in_base();
         rhs %= bits_in_base();
     }
@@ -137,7 +137,7 @@ void shift_left_magnitude(big_integer::magnitude_t &a, big_integer::digit_t rhs)
     big_integer::digit_t d = 0;
     big_integer::magnitude_t res(a.size() + static_cast<big_integer::digit_t>((rhs + 31) / 32));
     size_t j = 0;
-    while (rhs >= int(bits_in_base())) {
+    while (rhs >= bits_in_base()) {
         rhs -= bits_in_base();
         res[j++] = 0;
     }

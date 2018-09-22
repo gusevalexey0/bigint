@@ -1,3 +1,5 @@
+#include <random>
+
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -633,7 +635,7 @@ TEST(correctness, mul_div_randomized)
         for (size_t i = 0; i != number_of_multipliers; ++i)
             accumulator *= multipliers[i];
 
-        std::random_shuffle(multipliers.begin(), multipliers.end());
+        std::shuffle(multipliers.begin(), multipliers.end(), std::mt19937(std::random_device()()));
 
         for (size_t i = 1; i != number_of_multipliers; ++i)
             accumulator /= multipliers[i];
