@@ -177,7 +177,7 @@ big_integer big_integer::operator~() const {
 }
 
 big_integer &big_integer::operator++() {
-    return *this;
+    return *this = *this + 1;
 }
 
 big_integer big_integer::operator++(int) {
@@ -187,7 +187,7 @@ big_integer big_integer::operator++(int) {
 }
 
 big_integer &big_integer::operator--() {
-    return *this;
+    return *this = *this - 1;
 }
 
 big_integer big_integer::operator--(int) {
@@ -238,6 +238,17 @@ big_integer operator>>(big_integer a, int b) {
 
 bool operator==(big_integer const &a, big_integer const &b) {
     return a.sign == b.sign && a.mag == b.mag;
+    //if (a.sign != b.sign) {
+    //    return false;
+    //}
+    //if (a.mag.size() != b.mag.size()) {
+    //    return false;
+    //}
+    //for (size_t i = a.mag.size() - 1; i < a.mag.size(); --i) {
+    //    if (a.mag[i] != b.mag[i])
+    //        return false;
+    //}
+    //return true;
 }
 
 bool operator!=(big_integer const &a, big_integer const &b) {
@@ -286,7 +297,7 @@ std::string to_string(big_integer const &a) {
 }
 
 bool big_integer::is_zero() const {
-    return (sign == 0) || (mag.size() == 1 && mag[0] == 0) || mag.empty();
+    return (sign == 0) || (mag.size() == 1 && mag[0] == 0) || mag.size() == 0;
 }
 
 big_integer &big_integer::negate() {
@@ -318,7 +329,7 @@ big_integer big_integer::binary_operation(big_integer a, big_integer b, F &&lamb
     }
     if (a.is_zero()) {
         a.sign = 0;
-        a.mag.clear();
+        a.mag.resize(0);
     }
     return a;
 }
@@ -342,11 +353,11 @@ std::pair<big_integer, big_integer> big_integer::divmod(big_integer const &a, bi
         d = b;
         mul_by_digit(d.mag, f);
     }
-    q.mag.resize(n - m + 2, 0);
+    q.mag.resize(n - m + 2);
     r.mag.push_back(0);
     big_integer dq;
     for (size_t k = n - m; k < n - m + 1; --k) {
-        digit_t qt = check(r, d, k, m);
+        digit_t qt = trial(r, d, static_cast<digit_t>(k), static_cast<digit_t>(m));
         if (qt == 0)
             continue;
         dq = d;
@@ -388,7 +399,7 @@ std::pair<big_integer, big_integer> big_integer::make_div(big_integer const &a, 
 }
 
 big_integer::digit_t
-big_integer::check(big_integer const &r, big_integer const &d, big_integer::digit_t k, big_integer::digit_t m) {
+big_integer::trial(big_integer const &r, big_integer const &d, big_integer::digit_t k, big_integer::digit_t m) {
     digit_t km = k + m;
     if (r == 0)
         return 0;

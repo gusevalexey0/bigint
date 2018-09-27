@@ -7,17 +7,13 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include "vector.h"
 
 struct big_integer
 {
-    void debug() {
-        std::cout << sign << "\n";
-        for (uint32_t i : mag)
-            std::cout << i << ' ';
-        std::cout << "\n";
-    }
     using digit_t = uint32_t;
-    using magnitude_t = std::vector<digit_t>;
+    //using magnitude_t = std::vector<digit_t>;
+    using magnitude_t = my_vector;
     big_integer();
     big_integer(big_integer const& other);
 
@@ -69,7 +65,7 @@ private:
     big_integer binary_operation(big_integer a, big_integer b, F &&lambda);
     std::pair<big_integer, big_integer> divmod(big_integer const &, big_integer const &);
     std::pair<big_integer, big_integer> make_div(big_integer const &a, big_integer const &b);
-    digit_t check(big_integer const &r, big_integer const &d, digit_t k, digit_t m);
+    digit_t trial(big_integer const &r, big_integer const &d, digit_t k, digit_t m);
     bool cmp_pref(big_integer const &r, big_integer const &d, digit_t k, digit_t m);
 };
 

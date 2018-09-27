@@ -69,7 +69,7 @@ int compare_magnitude(const big_integer::magnitude_t &a, const big_integer::magn
 }
 
 void mul_magnitude(big_integer::magnitude_t &a, const big_integer::magnitude_t &b) {
-    big_integer::magnitude_t res(a.size() + b.size() + 2, 0);
+    big_integer::magnitude_t res(a.size() + b.size() + 2);
     for (size_t i = 0; i < a.size(); ++i) {
         uint64_t product = 0, sum = 0, tmp = 0;
         for (size_t j = 0; j < b.size(); ++j) {
@@ -105,7 +105,9 @@ void div_by_digit(big_integer::magnitude_t &a, const big_integer::digit_t b, big
         res[j++] = static_cast<big_integer::digit_t>(tmp / b);
         tmp %= b;
     }
-    std::reverse(res.begin(), res.end());
+    for (size_t i = 0; i < res.size() / 2; ++i) {
+        std::swap(res[i], res[res.size() - i - 1]);
+    }
     strip_leading_zeroes(res);
     rem = static_cast<big_integer::digit_t>(tmp);
     a = res;
@@ -125,7 +127,9 @@ void shift_right_magnitude(big_integer::magnitude_t &a, big_integer::digit_t rhs
         d = (a[i] & ((1u << rhs) -1u)) << (bits_in_base() - rhs);
         res.push_back(digit);
     }
-    std::reverse(res.begin(), res.end());
+    for (size_t i = 0; i < res.size() / 2; ++i) {
+        std::swap(res[i], res[res.size() - i - 1]);
+    }
     strip_leading_zeroes(res);
     a = res;
 }
@@ -142,17 +146,17 @@ void shift_left_magnitude(big_integer::magnitude_t &a, big_integer::digit_t rhs)
         res[j++] = 0;
     }
     if (!rhs) {
-        for (auto i : a) {
-            res[j++] = i;
+        for (size_t i = 0; i < a.size(); ++i) {
+            res[j++] = a[i];
         }
         strip_leading_zeroes(res);
         a = res;
         return;
     }
-    for (auto i : a) {
-        big_integer::digit_t digit = d | (i << rhs);
+    for (size_t i = 0; i < a.size(); ++i) {
+        big_integer::digit_t digit = d | (a[i] << rhs);
         res[j++] = digit;
-        d = ((i >> (bits_in_base() - static_cast<big_integer::digit_t>(rhs))));
+        d = ((a[i] >> (bits_in_base() - static_cast<big_integer::digit_t>(rhs))));
     }
     if (d)
         res.push_back(d);
@@ -161,8 +165,10 @@ void shift_left_magnitude(big_integer::magnitude_t &a, big_integer::digit_t rhs)
 }
 
 void twos_complement(big_integer::magnitude_t &a) {
-    for (auto &i : a) {
-        i = ~i;
+    for (size_t i = 0; i < a.size(); ++i) {
+        a[i] = ~a[i];
     }
-    add_magnitude(a, {1});
+    big_integer::magnitude_t tmp;
+    tmp.push_back(1);
+    add_magnitude(a, tmp);
 }
